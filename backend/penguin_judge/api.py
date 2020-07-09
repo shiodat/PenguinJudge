@@ -718,8 +718,6 @@ def upload_test_dataset(contest_id: str, problem_id: str) -> Response:
         counts = Counter()  # type: ignore
         path_mapping = {}
         for x in z.namelist():
-            if not (x.endswith('.in') or x.endswith('.out')):
-                continue
             name = os.path.basename(x)
             counts.update([os.path.splitext(name)[0]])
             path_mapping[name] = x
@@ -728,9 +726,9 @@ def upload_test_dataset(contest_id: str, problem_id: str) -> Response:
             if v != 2:
                 continue
             try:
-                with z.open(path_mapping[k + '.in']) as zi:
+                with z.open(path_mapping[k]) as zi:
                     in_data = zctx.compress(zi.read())
-                with z.open(path_mapping[k + '.out']) as zo:
+                with z.open(path_mapping[k]) as zo:
                     out_data = zctx.compress(zo.read())
             except Exception:
                 continue
@@ -782,8 +780,7 @@ def _get_test_data(contest_id: str, problem_id: str, test_id: str,
             abort(404)
         f = BytesIO(zctx.decompress(tc.input if is_input else tc.output))
         return send_file(
-            f, as_attachment=True, attachment_filename='{}.{}'.format(
-                test_id, 'in' if is_input else 'out'))
+            f, as_attachment=True, attachment_filename=test_id)
 
 
 @app.route('/contests/<contest_id>/problems/<problem_id>/tests/<test_id>/in')

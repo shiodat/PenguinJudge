@@ -81,21 +81,21 @@ for dir_name in os.listdir(base_path):
     p['description'] = ''.join(problem_desc).strip()
 
     inputs = [
-        x[:-3] for x in os.listdir(join(p_path, 'input'))
-        if x.endswith('.in')]
+        x[:-3] for x in os.listdir(join(p_path, 'in'))
+    ]
     outputs = [
-        x[:-4] for x in os.listdir(join(p_path, 'output'))
-        if x.endswith('.out')]
+        x[:-4] for x in os.listdir(join(p_path, 'out'))
+    ]
     io_names = sorted(set(inputs) & set(outputs), key=lambda x: (_try_parse_num(x), x))
 
     zip_bytes = BytesIO()
     with ZipFile(zip_bytes, mode='w', compression=ZIP_DEFLATED) as z:
         for io_name in io_names:
-            in_bytes = open(join(p_path, 'input', io_name + '.in'), 'rb').read()
-            out_bytes = open(join(p_path, 'output', io_name + '.out'), 'rb').read()
-            with z.open(io_name + '.in', mode='w') as f:
+            in_bytes = open(join(p_path, 'in', io_name), 'rb').read()
+            out_bytes = open(join(p_path, 'out', io_name), 'rb').read()
+            with z.open(io_name, mode='w') as f:
                 f.write(in_bytes)
-            with z.open(io_name + '.out', mode='w') as f:
+            with z.open(io_name, mode='w') as f:
                 f.write(out_bytes)
     p['dataset'] = zip_bytes.getvalue()
     problems.append(p)
